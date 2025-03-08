@@ -22,7 +22,8 @@ fun main() {
 
     //println(permutationOptimized1(listOf(1,2,3,4,5), 49))
 
-    val iterator = permutationSeq(listOf("a","b","c", "d")).iterator()
+    //val iterator = permutationSeq(listOf("a","b","c", "d")).iterator()
+    val iterator = permutationSeq(listOf("a")).iterator()
     while (iterator.hasNext()) {
         val perm = iterator.next()
         println("permutation: $perm")
@@ -33,43 +34,54 @@ fun main() {
 fun <T> permutationSeq(l: List<T>): Sequence<List<T>> = sequence {
     val n = l.size
 
-    var running = true
+    if (n == 0) {
+        // The empty list has one permutation: the empty list.
+        yield(l)
+    } else {
 
-    val maxCounts = LongArray(n)
-    for (i in 0 until n) {
-        maxCounts[i] = factorial(n - i - 1)
-    }
+        var running = true
 
-    val curCounts = LongArray(n) { 0 }
-    val idx = IntArray(n) { 0 }
-
-    while (running) {
-        val copy = mutableListOf<T>()
-        copy.addAll(l) //TODO!~  We need to find a smarter way, don't want to copy the list in every call, right...?
-
-        val permutation = mutableListOf<T>()
+        // The first element of the permutation is repeated (n-1)! times.
+        // Within each of these repetitions, the second one is repeated (n-2)! times.
+        // And so on.
+        // The array `maxCounts` keeps track of these maxima.
+        val maxCounts = LongArray(n)
         for (i in 0 until n) {
-            permutation.addLast(copy[idx[i]])
-            copy.removeAt(idx[i])
+            //TODO?~ Make this independent of the "factorial" function?
+            maxCounts[i] = factorial(n - i - 1)
         }
 
-        yield(permutation)
+        val curCounts = LongArray(n) { 0 }
+        val idx = IntArray(n) { 0 }
 
-        for (i in 0 until n) {
+        while (running) {
+            val copy = mutableListOf<T>()
+            copy.addAll(l) //TODO!~  We need to find a smarter way, don't want to copy the list in every call, right...?
 
-            curCounts[i]++
-            if (curCounts[i] == maxCounts[i]) {
-                curCounts[i] = 0
-                idx[i]++
-                if (idx[i] == n - i) {
-                    if (i == 0) {
-                        running = false
-                    } else {
-                        idx[i] = 0
-                    }
-                }
+            val permutation = mutableListOf<T>()
+            for (i in 0 until n) {
+                permutation.addLast(copy[idx[i]])
+                copy.removeAt(idx[i])
             }
 
+            yield(permutation)
+
+            for (i in 0 until n) {
+
+                curCounts[i]++
+                if (curCounts[i] == maxCounts[i]) {
+                    curCounts[i] = 0
+                    idx[i]++
+                    if (idx[i] == n - i) {
+                        if (i == 0) {
+                            running = false
+                        } else {
+                            idx[i] = 0
+                        }
+                    }
+                }
+
+            }
         }
     }
 }
@@ -82,7 +94,7 @@ fun<T> prepend(elt: T, l: MutableList<T>): MutableList<T> {
 fun<T> permutations(l: List<T>): List<MutableList<T>> {
     val result = mutableListOf(mutableListOf<T>())
     if (l.isEmpty()) {
-        return result //TODO?~ Shouldn't the result of permuting an empty list be just an empty list?
+        return result
     } else {
         result.clear()
         for (i in l.indices) {
@@ -100,7 +112,7 @@ fun<T> permutations(l: List<T>): List<MutableList<T>> {
 fun <T> iterativePermutations(l: List<T>): List<List<T>> {
     val result = mutableListOf<List<T>>()
     if (l.isEmpty()) {
-        return result
+        return listOf(mutableListOf())
     }
 
     // Start with an empty list to build permutations
