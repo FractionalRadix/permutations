@@ -28,44 +28,51 @@ fun<T> prepend(elt: T, l: MutableList<T>): MutableList<T> {
     return l
 }
 
-//TODO!~ Return an iterator... make this a generator function.
 fun<T> permutations(l: List<T>): List<MutableList<T>> {
-    var result = mutableListOf(mutableListOf<T>())
+    val result = mutableListOf(mutableListOf<T>())
     if (l.isEmpty()) {
-        return result
+        return result //TODO?~ Shouldn't the result of permuting an empty list be just an empty list?
     } else {
+        result.clear()
         for (i in l.indices) {
             val head = l[i]
             val remainingElements = l.take(i) + l.drop(i + 1)
             val tails = permutations(remainingElements)
             val newLists = tails.map { tail -> prepend(head, tail) }
-
-            //TODO?~ Find a way to not have that empty list in there in the first place...?
-            result = result.filter { l2 -> l2.isNotEmpty() }.toMutableList()
             result.addAll(newLists)
         }
     }
     return result
 }
 
-fun<T> permutations_iter(l: List<T>, depth: Int = 0): List<MutableList<T>> {
-    var result = mutableListOf(mutableListOf<T>())
+
+fun <T> iterativePermutations(l: List<T>): List<List<T>> {
+    val result = mutableListOf<List<T>>()
     if (l.isEmpty()) {
         return result
-    } else {
-        for (i in l.indices) {
-            val head = l[i]
-            val remainingElements = l.take(i) + l.drop(i + 1)
-            val tails = permutations_iter(remainingElements, depth + 3)
-            val newLists = tails.map { tail -> prepend(head, tail) }
-
-            //TODO?~ Find a way to not have that empty list in there in the first place...?
-            result = result.filter { l2 -> l2.isNotEmpty() }.toMutableList()
-            result.addAll(newLists)
-        }
     }
+
+    // Start with an empty list to build permutations
+    val stack = mutableListOf<List<T>>()
+    stack.add(emptyList())
+
+    for (element in l) {
+        val newStack = mutableListOf<List<T>>()
+        for (permutation in stack) {
+            for (i in 0..permutation.size) {
+                // Create a new permutation by inserting the element at position i
+                val newPermutation = permutation.toMutableList().apply { add(i, element) }
+                newStack.add(newPermutation)
+            }
+        }
+        stack.clear()
+        stack.addAll(newStack)
+    }
+
+    result.addAll(stack)
     return result
 }
+
 
 fun factorial(n: Int): Int = if (n<=1) { 1 } else { n * factorial(n-1) }
 
