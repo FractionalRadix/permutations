@@ -3,24 +3,75 @@ package com.cormontia
 import java.lang.Math.floorDiv
 
 fun main() {
-    println("Hello World!")
-    val ps = permutations(listOf('a','b','c'))
-    println(ps)
-    println()
 
-    for (i in 0..5) {
-        val l = permutation(listOf('a', 'b', 'c'), i)
-        println("Permutation $i is $l.")
+    //val ps = permutations(listOf('a','b','c'))
+    //println(ps)
+    //println()
+
+    //for (i in 0..5) {
+    //    val l = permutation(listOf('a', 'b', 'c'), i)
+    //    println("Permutation $i is $l.")
+    //}
+
+    //try {
+    //    val p = permutation(listOf(1, 2, 3), 40)
+    //    println(p)
+    //} catch (exc: IllegalArgumentException) {
+    //    println("Oops! ${exc.message}")
+    //}
+
+    //println(permutationOptimized1(listOf(1,2,3,4,5), 49))
+
+    val iterator = permutationSeq(listOf("a","b","c", "d")).iterator()
+    while (iterator.hasNext()) {
+        val perm = iterator.next()
+        println("permutation: $perm")
+    }
+}
+
+
+fun <T> permutationSeq(l: List<T>): Sequence<List<T>> = sequence {
+    val n = l.size
+
+    var running = true
+
+    val maxCounts = LongArray(n)
+    for (i in 0 until n) {
+        maxCounts[i] = factorial(n - i - 1)
     }
 
-    try {
-        val p = permutation(listOf(1, 2, 3), 40)
-        println(p)
-    } catch (exc: IllegalArgumentException) {
-        println("Oops! ${exc.message}")
-    }
+    val curCounts = LongArray(n) { 0 }
+    val idx = IntArray(n) { 0 }
 
-    println(permutationOptimized1(listOf(1,2,3,4,5), 49))
+    while (running) {
+        val copy = mutableListOf<T>()
+        copy.addAll(l) //TODO!~  We need to find a smarter way, don't want to copy the list in every call, right...?
+
+        val permutation = mutableListOf<T>()
+        for (i in 0 until n) {
+            permutation.addLast(copy[idx[i]])
+            copy.removeAt(idx[i])
+        }
+
+        yield(permutation)
+
+        for (i in 0 until n) {
+
+            curCounts[i]++
+            if (curCounts[i] == maxCounts[i]) {
+                curCounts[i] = 0
+                idx[i]++
+                if (idx[i] == n - i) {
+                    if (i == 0) {
+                        running = false
+                    } else {
+                        idx[i] = 0
+                    }
+                }
+            }
+
+        }
+    }
 }
 
 fun<T> prepend(elt: T, l: MutableList<T>): MutableList<T> {
@@ -62,6 +113,7 @@ fun <T> iterativePermutations(l: List<T>): List<List<T>> {
             for (i in 0..permutation.size) {
                 // Create a new permutation by inserting the element at position i
                 val newPermutation = permutation.toMutableList().apply { add(i, element) }
+                println(newPermutation)
                 newStack.add(newPermutation)
             }
         }
@@ -74,7 +126,7 @@ fun <T> iterativePermutations(l: List<T>): List<List<T>> {
 }
 
 
-fun factorial(n: Int): Int = if (n<=1) { 1 } else { n * factorial(n-1) }
+fun factorial(n: Int): Long = if (n<=1) { 1 } else { n * factorial(n-1) }
 
 
 //TODO?~ Use Long or even BigInteger?
@@ -97,11 +149,11 @@ fun<T> permutation(l: List<T>, n: Int): List<T> {
     if  (n >= nrOfPermutations)
         throw IllegalArgumentException("Index of permutation ($n) should not exceed number of permutations ($nrOfPermutations).")
     val cohortSize = factorial(l.size - 1)
-    val cohort = floorDiv(n, cohortSize)
+    val cohort = floorDiv(n, cohortSize.toInt()) //TODO!~  Find a floorDiv that accepts Long
     val head = l[cohort]
     val remainingList = l.take(cohort) + l.drop(cohort + 1)
     val remainder = n - cohort * cohortSize
-    val tail = permutation(remainingList, remainder)
+    val tail = permutation(remainingList, remainder.toInt())
     val result = mutableListOf(head)
     result.addAll(tail)
     return result
