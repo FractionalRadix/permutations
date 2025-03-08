@@ -1,7 +1,5 @@
 package com.cormontia
 
-import java.lang.Math.floorDiv
-
 fun main() {
 
     val ps = permutations(listOf('a','b','c'))

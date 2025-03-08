@@ -137,7 +137,7 @@ class Permutations {
 
             val factorials = factorialArray(n)
 
-            fun<T> permutation(l: List<T>, n: Long): List<T> {
+            fun<T> localPermutation(l: List<T>, n: Long): List<T> {
                 if (l.isEmpty() || l.size == 1)
                     return l
 
@@ -151,14 +151,14 @@ class Permutations {
                 val head = l[cohort]
                 val remainingList = l.take(cohort) + l.drop(cohort + 1)
                 val remainder = n - cohort * cohortSize
-                val tail = permutation(remainingList, remainder)
+                val tail = localPermutation(remainingList, remainder)
                 val result = mutableListOf(head)
                 result.addAll(tail)
 
                 return result
             }
 
-            return permutation(l, n)
+            return localPermutation(l, n.toLong())
         }
     }
 }
