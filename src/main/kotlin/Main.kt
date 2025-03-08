@@ -29,7 +29,7 @@ fun<T> prepend(elt: T, l: MutableList<T>): MutableList<T> {
 }
 
 //TODO!~ Return an iterator... make this a generator function.
-fun<T> permutations(l: List<T>, depth: Int = 0): List<MutableList<T>> {
+fun<T> permutations(l: List<T>): List<MutableList<T>> {
     var result = mutableListOf(mutableListOf<T>())
     if (l.isEmpty()) {
         return result
@@ -37,7 +37,7 @@ fun<T> permutations(l: List<T>, depth: Int = 0): List<MutableList<T>> {
         for (i in l.indices) {
             val head = l[i]
             val remainingElements = l.take(i) + l.drop(i + 1)
-            val tails = permutations(remainingElements, depth + 3)
+            val tails = permutations(remainingElements)
             val newLists = tails.map { tail -> prepend(head, tail) }
 
             //TODO?~ Find a way to not have that empty list in there in the first place...?
@@ -48,6 +48,24 @@ fun<T> permutations(l: List<T>, depth: Int = 0): List<MutableList<T>> {
     return result
 }
 
+fun<T> permutations_iter(l: List<T>, depth: Int = 0): List<MutableList<T>> {
+    var result = mutableListOf(mutableListOf<T>())
+    if (l.isEmpty()) {
+        return result
+    } else {
+        for (i in l.indices) {
+            val head = l[i]
+            val remainingElements = l.take(i) + l.drop(i + 1)
+            val tails = permutations_iter(remainingElements, depth + 3)
+            val newLists = tails.map { tail -> prepend(head, tail) }
+
+            //TODO?~ Find a way to not have that empty list in there in the first place...?
+            result = result.filter { l2 -> l2.isNotEmpty() }.toMutableList()
+            result.addAll(newLists)
+        }
+    }
+    return result
+}
 
 fun factorial(n: Int): Int = if (n<=1) { 1 } else { n * factorial(n-1) }
 
