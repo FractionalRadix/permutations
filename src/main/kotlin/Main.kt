@@ -52,6 +52,7 @@ fun<T> permutations(l: List<T>, depth: Int = 0): List<MutableList<T>> {
 fun factorial(n: Int): Int = if (n<=1) { 1 } else { n * factorial(n-1) }
 
 
+//TODO?~ Use Long or even BigInteger?
 // Assumption: n < l.size!
 // In words, n is less than the factorial of the size of l.
 /**
@@ -81,14 +82,14 @@ fun<T> permutation(l: List<T>, n: Int): List<T> {
     return result
 }
 
-//TODO?~ Use Long or even BigInteger
+//TODO?~ Use BigInteger?
 fun<T> permutationOptimized1(l: List<T>, n: Int): List<T> {
 
-    fun precalculateFactorials(n: Int): List<Int> {
-        val factorials = mutableListOf<Int>()
+    fun precalculateFactorials(n: Int): List<Long> {
+        val factorials = mutableListOf<Long>()
         factorials.add(1)
 
-        var factorial = 1
+        var factorial = 1L
         for (i in 1..n) {
             factorial *= i
             factorials.add(factorial)
@@ -99,14 +100,14 @@ fun<T> permutationOptimized1(l: List<T>, n: Int): List<T> {
 
     val factorials = precalculateFactorials(n)
 
-    fun<T> permutation(l: List<T>, n: Int): List<T> {
+    fun<T> permutation(l: List<T>, n: Long): List<T> {
         if (l.isEmpty() || l.size == 1)
             return l
         val nrOfPermutations = factorials[l.size]
         if  (n >= nrOfPermutations)
             throw IllegalArgumentException("Index of permutation ($n) should not exceed number of permutations ($nrOfPermutations).")
         val cohortSize = factorials[l.size - 1]
-        val cohort = floorDiv(n, cohortSize)
+        val cohort = floorDiv(n, cohortSize).toInt()
         val head = l[cohort]
         val remainingList = l.take(cohort) + l.drop(cohort + 1)
         val remainder = n - cohort * cohortSize
