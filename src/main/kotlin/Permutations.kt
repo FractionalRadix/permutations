@@ -31,12 +31,6 @@ class Permutations {
             return result
         }
 
-        //TODO?+
-        // Extract "precalculateFactorials".
-        // Then re-use it in "generator": generate the factorials array, and revert it.
-        //   maxCounts = facultyList(n).reverse()
-        // More intuitive than what you have now...
-
         /**
          * Given a list, generate the permutations of that list.
          * Note that this method returns a Sequence. So the next permutation is generated only when the user requests
