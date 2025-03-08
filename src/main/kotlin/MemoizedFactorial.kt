@@ -1,8 +1,5 @@
 package com.cormontia
 
-import java.math.BigInteger
-
-//TODO?~ Use Long or even BigInteger?
 /**
  * A tool to calculate factorials, that uses memoization.
  */

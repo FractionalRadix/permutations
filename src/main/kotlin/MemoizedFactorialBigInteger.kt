@@ -14,7 +14,6 @@ class MemoizedFactorialBigInteger {
 
         for (i in calculated.size .. n) {
             val iBig = BigInteger.valueOf(i.toLong())
-            //highestSoFar = highestSoFar.times(iBig)
             highestSoFar *= iBig
             calculated.addLast(highestSoFar)
         }

@@ -1,31 +1,40 @@
-import com.cormontia.permutations
+import com.cormontia.Permutations
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertContentEquals
 
 class PermutationsTester {
     @Test
-    fun `the set of permutations of an empty list is a list containing an empty list`() {
-        val expected = listOf(mutableListOf<Char>())
-        val actual = permutations<Char>(listOf())
-        assertEquals(expected, actual)
+    fun `the factorial array of 0 elements is an empty array`() {
+        val actual = Permutations.factorialArray(0)
+        val expected = LongArray(0)
+        assertContentEquals(expected, actual)
     }
 
     @Test
-    fun `the set of permutations of a singleton list is a list containing a singleton list`() {
-        val expected = listOf(mutableListOf('a'))
-        val actual = permutations(listOf('a'))
-        assertEquals(expected, actual)
+    fun `the factorial array of a single element is an array containing just the value one`() {
+        val actual = Permutations.factorialArray(1)
+        val expected = LongArray(1) { 1 }
+        assertContentEquals(expected, actual)
     }
 
     @Test
-    fun `the set of permutations of a list of three is a list of six different permutations`() {
-        val expected = listOf(
-            mutableListOf('a', 'b', 'c'), mutableListOf('a', 'c', 'b'),
-            mutableListOf('b', 'a', 'c'), mutableListOf('b', 'c', 'a'),
-            mutableListOf('c', 'a', 'b'), mutableListOf('c', 'b', 'a'),
-            )
-        val actual = permutations(listOf('a', 'b', 'c'))
-        // Convert the results to set, to make the assert ignore ordering.
-        assertEquals(expected.toSet(), actual.toSet())
+    fun `the factorial array of two elements is an array containing two times the value one`() {
+        val actual = Permutations.factorialArray(2)
+        val expected = LongArray(2) { 1 }
+        assertContentEquals(expected, actual)
     }
+
+    @Test
+    fun `the factorial array of six elements is 1,1,2,6,24,120`() {
+        val actual = Permutations.factorialArray(6)
+        val expected = LongArray(6)
+        for (element in listOf(1L,1L,2L,6L,24L,120L).withIndex()) {
+            expected[element.index] = element.value
+        }
+        assertContentEquals(expected, actual)
+    }
+
+    //TODO!+ Add tests for `generator`
+    //TODO?+ Add tests for `permutation` (won't be necessary if we remove it...)
+    //TODO!+ Add tests for `permutationOptimized1`
 }
