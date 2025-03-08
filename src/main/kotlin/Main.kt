@@ -22,38 +22,45 @@ fun main() {
 
     //println(permutationOptimized1(listOf(1,2,3,4,5), 49))
 
-    //val iterator = permutationSeq(listOf("a","b","c", "d")).iterator()
-    val iterator = permutationSeq(listOf("a")).iterator()
+    val iterator = permutationSeq(listOf("a","b","c", "d")).iterator()
+    //val iterator = permutationSeq(listOf("a")).iterator()
     while (iterator.hasNext()) {
         val perm = iterator.next()
         println("permutation: $perm")
     }
 }
 
-
 fun <T> permutationSeq(l: List<T>): Sequence<List<T>> = sequence {
     val n = l.size
 
     if (n == 0) {
-        // The empty list has one permutation: the empty list.
+        // Special case.
+        // The empty list has just one permutation: the empty list.
         yield(l)
     } else {
-
-        var running = true
 
         // The first element of the permutation is repeated (n-1)! times.
         // Within each of these repetitions, the second one is repeated (n-2)! times.
         // And so on.
         // The array `maxCounts` keeps track of these maxima.
         val maxCounts = LongArray(n)
-        for (i in 0 until n) {
-            //TODO?~ Make this independent of the "factorial" function?
-            maxCounts[i] = factorial(n - i - 1)
+        var fac = 1L
+        for (i in 1 .. n) {
+            maxCounts[n-i] = fac
+            fac *= i
         }
 
+        // "curCounts" keeps track of how far along we are.
+        // Each element of "curCounts" counts from 0 to the associated "maxCount".
+        // In other words, `curCounts[i]` is a counter that resets after it reaches `maxCounts[i]`.
         val curCounts = LongArray(n) { 0 }
+
+        // Finally, `idx` tells us which elements we should take from the original array,
+        // to arrive at the current permutation.
         val idx = IntArray(n) { 0 }
 
+        // With these preparations done, we can finally start the loop.
+        var running = true
         while (running) {
             val copy = mutableListOf<T>()
             copy.addAll(l) //TODO!~  We need to find a smarter way, don't want to copy the list in every call, right...?
@@ -125,7 +132,6 @@ fun <T> iterativePermutations(l: List<T>): List<List<T>> {
             for (i in 0..permutation.size) {
                 // Create a new permutation by inserting the element at position i
                 val newPermutation = permutation.toMutableList().apply { add(i, element) }
-                println(newPermutation)
                 newStack.add(newPermutation)
             }
         }
