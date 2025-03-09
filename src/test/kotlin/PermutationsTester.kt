@@ -1,6 +1,8 @@
 import com.cormontia.Permutations
 import org.junit.jupiter.api.Test
 import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 class PermutationsTester {
     @Test
@@ -34,7 +36,39 @@ class PermutationsTester {
         assertContentEquals(expected, actual)
     }
 
-    //TODO!+ Add tests for `generator`
+    @Test
+    fun `the only permutation of an empty list is the empty list`() {
+        val iterator = Permutations.generator(listOf<Char>()).iterator()
+        val actual = iterator.next()
+        val expected = listOf<Char>()
+        assertContentEquals(expected, actual)
+        assertFalse { iterator.hasNext() }
+    }
+
+    @Test
+    fun `the only permutation of a singleton list is the singleton list`() {
+        val iterator = Permutations.generator(listOf('a')).iterator()
+        val actual = iterator.next()
+        val expected = listOf('a')
+        assertContentEquals(expected, actual)
+        assertFalse { iterator.hasNext() }
+    }
+
+    @Test
+    fun `when given a list of 3 elements, the generator returns all 6 permutations and nothing more`() {
+        val iterator = Permutations.generator(listOf('a', 'b', 'c')).iterator()
+        val actual = mutableSetOf<List<Char>>()
+        for (permutation in iterator) {
+            actual.add(permutation)
+        }
+        val expected = mutableSetOf(
+            listOf('a', 'b', 'c'), listOf('a', 'c', 'b'),
+            listOf('b', 'a', 'c'), listOf('b', 'c', 'a'),
+            listOf('c', 'a', 'b'), listOf('c', 'b', 'a')
+        )
+        assertEquals(expected, actual)
+    }
+
     //TODO?+ Add tests for `permutation` (won't be necessary if we remove it...)
     //TODO!+ Add tests for `permutationOptimized1`
 }

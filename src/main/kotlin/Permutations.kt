@@ -67,6 +67,7 @@ class Permutations {
                 // With these preparations done, we can finally start the loop.
                 var running = true
                 while (running) {
+
                     val copy = mutableListOf<T>()
                     copy.addAll(l) //TODO!~  We need to find a smarter way, don't want to copy the list in every call, right...?
 
@@ -80,11 +81,18 @@ class Permutations {
 
                     for (i in 0 until n) {
 
+                        // Increase the counter for every "digit".
                         curCounts[i]++
+
+                        // If any of the counters reaches its maximum value, reset it to 0.
+                        // And increase the "idx" for that counter: it now needs to point at the next index in the list.
                         if (curCounts[i] == maxCounts[i]) {
                             curCounts[i] = 0
                             idx[i]++
                             if (idx[i] == n - i) {
+                                // If an idx value reaches its maximum (size of the list minus one), reset it.
+                                // Unless it is the very first idx value. If THAT one reaches its maximum, then
+                                // we have reached the last permutation and we are done.
                                 if (i == 0) {
                                     running = false
                                 } else {
