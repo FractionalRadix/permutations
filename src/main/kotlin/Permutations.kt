@@ -1,6 +1,7 @@
 package com.cormontia
 
 import java.lang.Math.floorDiv
+import java.math.BigInteger
 
 class Permutations {
 
@@ -13,6 +14,13 @@ class Permutations {
          * @return The factorial of the input value.
          */
         fun factorial(n: Int): Long = if (n<=1) { 1 } else { n * factorial(n-1) }
+
+        //TODO?~ Use this instead of factorial(Int) -> Long ?
+        fun factorial_BigInteger(n: Int): BigInteger = if (n <= 1) {
+            BigInteger.ONE
+        } else {
+            BigInteger.valueOf(n.toLong()) *  factorial_BigInteger( n - 1 )
+        }
 
         /**
          * Generate an array, where every element holds the factorial of its index.
@@ -27,6 +35,23 @@ class Permutations {
             for (i in 0 until n) {
                 result[i] = acc
                 acc *= (i+1)
+            }
+            return result
+        }
+
+        /**
+         * Generate an array, where every element holds the factorial of its index.
+         * In other words, an array where for every i, a[i] = i!
+         * For example, if n == 5, the resulting array would be [1,1,2,6,24].
+         * @param n Size of the array.
+         * @return An array where for every i, a[i] is equal to the factorial of i.
+         */
+        fun factorialArray_BigInteger(n: Int): Array<BigInteger> {
+            val result = Array(n) { BigInteger.ONE}
+            var acc = BigInteger.ONE
+            for (i in 0 until n) {
+                result[i] = acc
+                acc *= ( BigInteger.valueOf(i.toLong()) + BigInteger.ONE)
             }
             return result
         }
@@ -134,10 +159,37 @@ class Permutations {
             return result
         }
 
-        //TODO?~ Use BigInteger?
+        /**
+         * Given a list, return the n-th permutation of that list, 0-based.
+         * For example, the ordered permutations of ['a','b','c'] would be:
+         * [['a','b','c'], ['a','c','b'], ['b', 'a', 'c'], ['b', 'c', 'a'], ['c', 'a', 'b'], ['c', 'b', 'a']]
+         * The 4th permutation would be ['c', 'a', 'b'].
+         * @param l The list to permute.
+         * @param n Index of the permutation, 0-based. Must be smaller than the factorial of the size of the input list.
+         * @return The unique permutation of the list for the given index.
+         * @throws IllegalArgumentException If the index of the permutation is larger than the amount of possible permutations.
+         */
+        fun<T> permutation_BigInteger(l: List<T>, n: BigInteger): List<T> {
+            if (l.isEmpty() || l.size == 1)
+                return l
+            val nrOfPermutations = factorial_BigInteger(l.size)
+            if  (n >= nrOfPermutations)
+                throw IllegalArgumentException("Index of permutation ($n) should not exceed number of permutations ($nrOfPermutations).")
+            val cohortSize = factorial_BigInteger(l.size - 1)
+            val divideAndRemainder = n.divideAndRemainder(cohortSize)
+            val cohort = divideAndRemainder[0].toInt() //TODO?~ Check for dropped values? Your list shouldn't have more than Integer.MAX_VALUE elements....
+            val head = l[cohort]
+            val remainingList = l.take(cohort) + l.drop(cohort + 1)
+            val remainder = divideAndRemainder[1].toInt()
+            val tail = permutation(remainingList, remainder)
+            val result = mutableListOf(head)
+            result.addAll(tail)
+            return result
+        }
+
         fun<T> permutationOptimized1(l: List<T>, n: Int): List<T> {
 
-            val factorials = factorialArray(n)
+            val factorials = factorialArray(l.size)
 
             fun<T> localPermutation(l: List<T>, n: Long): List<T> {
                 if (l.isEmpty() || l.size == 1)
@@ -162,5 +214,37 @@ class Permutations {
 
             return localPermutation(l, n.toLong())
         }
+
+        fun<T> permutationOptimized1_BigInteger(l: List<T>, n: BigInteger): List<T> {
+
+            val factorials = factorialArray_BigInteger(l.size)
+
+            fun<T> localPermutation(l: List<T>, n: BigInteger): List<T> {
+                if (l.isEmpty() || l.size == 1)
+                    return l
+
+                val nrOfPermutations = factorials[l.size]
+
+                if  (n >= nrOfPermutations)
+                    throw IllegalArgumentException("Index of permutation ($n) should not exceed number of permutations ($nrOfPermutations).")
+
+                val cohortSize = factorials[l.size - 1]
+                val divideAndRemainder = n.divideAndRemainder(cohortSize)
+                //val cohort = floorDiv(n, cohortSize).toInt()
+                val cohort = divideAndRemainder[0].toInt() //TODO?~ Check for data loss? We're not likely to have lists with more than Int.MAX_VALUE elements....
+                val head = l[cohort]
+                val remainingList = l.take(cohort) + l.drop(cohort + 1)
+                //val remainder = n - cohort * cohortSize
+                val remainder = divideAndRemainder[1]
+                val tail = localPermutation(remainingList, remainder)
+                val result = mutableListOf(head)
+                result.addAll(tail)
+
+                return result
+            }
+
+            return localPermutation(l, n)
+        }
+
     }
 }
