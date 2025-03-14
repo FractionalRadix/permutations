@@ -1,5 +1,6 @@
 import com.cormontia.Permutations
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -70,5 +71,51 @@ class PermutationsTester {
     }
 
     //TODO?+ Add tests for `permutation` (won't be necessary if we remove it...)
+
+    @Test
+    fun `the first permutation of a list is the list itself`() {
+        val expected = listOf(1,2,3,4)
+        val actual = Permutations.permutation(listOf(1, 2, 3, 4), 0)
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `the last permutation of a list is the reverse of the list`() {
+        val expected = listOf(1,2,3,4)
+        val actual = Permutations.permutation(listOf(4, 3, 2, 1), 23)
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `the first and only permutation of an empty list is an empty list`() {
+        val expected = listOf<Int>()
+        val actual = Permutations.permutation(listOf<Int>(), 0)
+        assertEquals(expected, actual)
+        assertThrows<IllegalArgumentException> { Permutations.permutation(listOf<Int>(), 1) }
+    }
+
+    @Test
+    fun `the first and only permutation of a singleton list is a singleton list`() {
+        val expected = listOf(7)
+        val actual = Permutations.permutation(listOf(7), 0)
+        assertEquals(expected, actual)
+        assertThrows<IllegalArgumentException> { Permutations.permutation(listOf<Int>(), 1) }
+    }
+
+    @Test
+    fun `when a permutation is asked that is above the amount of possible permutations then an exception is thrown`() {
+        // The last permutation of a list of 4 elements has number 23 (4! - 1, the `- 1` because it's 0-based).
+        val actual1 = Permutations.permutation(listOf(1,2,3,4), 23)
+        // The previous call should not have caused an exception. The next one should.
+        assertThrows<IllegalArgumentException> { Permutations.permutation(listOf(1,2,3,4), 24) }
+    }
+
+    @Test
+    fun `when a negative permutation is asked then an exception is thrown`() {
+        assertThrows<IllegalArgumentException> { Permutations.permutation(listOf(1,2,3,4), -1 ) }
+    }
+
+
+
     //TODO!+ Add tests for `permutationOptimized1`
 }

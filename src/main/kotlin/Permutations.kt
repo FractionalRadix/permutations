@@ -143,11 +143,11 @@ class Permutations {
          * @throws IllegalArgumentException If the index of the permutation is larger than the amount of possible permutations.
          */
         fun<T> permutation(l: List<T>, n: Int): List<T> {
-            if (l.isEmpty() || l.size == 1)
-                return l
             val nrOfPermutations = factorial(l.size)
             if  (n >= nrOfPermutations)
                 throw IllegalArgumentException("Index of permutation ($n) should not exceed number of permutations ($nrOfPermutations).")
+            if (l.isEmpty() || l.size == 1)
+                return l
             val cohortSize = factorial(l.size - 1)
             val cohort = floorDiv(n, cohortSize.toInt()) //TODO!~  Find a floorDiv that accepts Long
             val head = l[cohort]
@@ -170,11 +170,11 @@ class Permutations {
          * @throws IllegalArgumentException If the index of the permutation is larger than the amount of possible permutations.
          */
         fun<T> permutation_BigInteger(l: List<T>, n: BigInteger): List<T> {
-            if (l.isEmpty() || l.size == 1)
-                return l
             val nrOfPermutations = factorial_BigInteger(l.size)
             if  (n >= nrOfPermutations)
                 throw IllegalArgumentException("Index of permutation ($n) should not exceed number of permutations ($nrOfPermutations).")
+            if (l.isEmpty() || l.size == 1)
+                return l
             val cohortSize = factorial_BigInteger(l.size - 1)
             val divideAndRemainder = n.divideAndRemainder(cohortSize)
             val cohort = divideAndRemainder[0].toInt() //TODO?~ Check for dropped values? Your list shouldn't have more than Integer.MAX_VALUE elements....
