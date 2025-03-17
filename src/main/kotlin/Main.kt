@@ -1,24 +1,26 @@
 package com.cormontia
 
+import java.math.BigInteger
+
 fun main() {
 
     val ps = permutations(listOf('a','b','c'))
     println(ps)
     println()
 
-    for (i in 0..5) {
-        val l = Permutations.permutation(listOf('a', 'b', 'c'), i)
+    for (i in 0L..5L) {
+        val l = Permutations.permutation(listOf('a', 'b', 'c'), BigInteger.valueOf(i))
         println("Permutation $i is $l.")
     }
 
     try {
-        val p = Permutations.permutation(listOf(1, 2, 3), 40)
+        val p = Permutations.permutation(listOf(1, 2, 3),  BigInteger.valueOf(40L))
         println(p)
     } catch (exc: IllegalArgumentException) {
-        println("Oops! ${exc.message}")
+        println("There weren't that many permutations! ${exc.message}")
     }
 
-    println(Permutations.permutationOptimized1(listOf(1,2,3,4,5), 49))
+    println(Permutations.permutationOptimized1(listOf(1,2,3,4,5), BigInteger.valueOf(49L)))
 
     val iterator = Permutations.generator(listOf("a", "b", "c", "d")).iterator()
     //val iterator = Permutations.generator(listOf("a", "b", "c")).iterator()
@@ -82,7 +84,3 @@ fun <T> iterativePermutations(l: List<T>): List<List<T>> {
     result.addAll(stack)
     return result
 }
-
-
-
-
