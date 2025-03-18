@@ -20,7 +20,7 @@ class Permutations {
          * @return An array where for every i, a[i] is equal to the factorial of i.
          */
         fun factorialArray(n: Int): Array<BigInteger> {
-            val result = Array(n) { BigInteger.ONE}
+            val result = Array(n) { BigInteger.ONE }
             var acc = BigInteger.ONE
             for (i in 0 until n) {
                 result[i] = acc
@@ -29,6 +29,15 @@ class Permutations {
             return result
         }
 
+        //TODO?+ Make a thread-safe version so that multiple threads can request values from the SAME generator.
+        // One way of doing this would be to give each thread its own "cohorts" to work on.
+        // For example, if the user has a list of 15 elements and 3 threads, we'd get 15/3 = 5 elements per thread..
+        // Thread 0 would handle the permutations that start with elements 0, 1, 2, 3, and 4.
+        // Thread 1 would handle the permutations that start with elements 5, 6, 7, 8, and 9.
+        // Thread 2 would handle the permutations that start with elements  10, 11, 12, 13, and 14.
+        // If the number is not evenly divisible, some threads would get one set of permutations more.
+        // We could even go so far as to hand out the "remaining" permutations to whatever thread finished its work
+        // first.
         /**
          * Given a list, generate the permutations of that list.
          * Note that this method returns a Sequence. So the next permutation is generated only when the user requests
@@ -115,6 +124,7 @@ class Permutations {
          * @throws IllegalArgumentException If the index of the permutation is larger than the amount of possible permutations.
          */
         fun<T> permutation(l: List<T>, n: BigInteger): List<T> {
+            //TODO?+ Assert that l.size <= Int.MAX_VALUE?
             if (n.signum() < 0)
                 throw IllegalArgumentException("Index of permutation should not be negative.")
             val nrOfPermutations = factorial(l.size)
@@ -136,16 +146,19 @@ class Permutations {
 
         fun<T> permutationOptimized1(l: List<T>, n: BigInteger): List<T> {
 
+            if (n.signum() < 0)
+                throw IllegalArgumentException("Index of permutation should not be negative.")
+            val nrOfPermutations = factorial(l.size)
+            if (n >= nrOfPermutations)
+                throw IllegalArgumentException("Index of permutation ($n) should not exceed number of permutations ($nrOfPermutations).")
+
+            //TODO?+ Assert that l.size <= Int.MAX_VALUE?
             val factorials = factorialArray(l.size)
 
             fun<T> localPermutation(l: List<T>, n: BigInteger): List<T> {
+
                 if (l.isEmpty() || l.size == 1)
                     return l
-
-                val nrOfPermutations = factorials[l.size]
-
-                if  (n >= nrOfPermutations)
-                    throw IllegalArgumentException("Index of permutation ($n) should not exceed number of permutations ($nrOfPermutations).")
 
                 val cohortSize = factorials[l.size - 1]
                 val divideAndRemainder = n.divideAndRemainder(cohortSize)
