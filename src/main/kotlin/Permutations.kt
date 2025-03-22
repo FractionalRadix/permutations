@@ -14,10 +14,10 @@ class Permutations {
 
         /**
          * Generate an array, where every element holds the factorial of its index.
-         * In other words, an array where for every i, a[i] = i!
+         * In other words, an array where for every i, a&#91;i&#93; = i!
          * For example, if n == 5, the resulting array would be [1,1,2,6,24].
          * @param n Size of the array.
-         * @return An array where for every i, a[i] is equal to the factorial of i.
+         * @return An array where for every i, a&#91;i&#91; is equal to the factorial of i.
          */
         fun factorialArray(n: Int): Array<BigInteger> {
             val result = Array(n) { BigInteger.ONE }
@@ -31,6 +31,7 @@ class Permutations {
 
         //TODO?+ Make a thread-safe version so that multiple threads can request values from the SAME generator.
         // One way of doing this would be to give each thread its own "cohorts" to work on.
+        // (LATER NOTE: give each thread a RANGE to work on).
         // For example, if the user has a list of 15 elements and 3 threads, we'd get 15/3 = 5 elements per thread..
         // Thread 0 would handle the permutations that start with elements 0, 1, 2, 3, and 4.
         // Thread 1 would handle the permutations that start with elements 5, 6, 7, 8, and 9.
